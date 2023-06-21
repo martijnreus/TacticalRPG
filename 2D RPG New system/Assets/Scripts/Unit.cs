@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Unit : MonoBehaviour
 {
+    [SerializeField] private int movementPoints;
+
     private OverlayTile currentTile;
     private bool isWalking;
 
@@ -14,4 +16,8 @@ public class Unit : MonoBehaviour
     public bool GetIsWalking() { return isWalking; }
 
     public void SetIsWalking(bool value) { isWalking = value; }
+
+    public int GetMovementPoints(){ return movementPoints; }
+
+    public void RemoveMovementPoint() { movementPoints -= 1; }
 }

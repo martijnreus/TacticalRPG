@@ -68,24 +68,10 @@ public class MouseControllerNew : MonoBehaviour
                             }
                         }
 
-                        if (path.Count != 0 && hasPlayer == false)
+                        if (path.Count != 0 && path.Count <= selectedUnit.GetMovementPoints() && hasPlayer == false)
                         {
                             state = State.walking;
                         }
-
-                        /*
-                        if (targetedOverlayTile) //TODO change this so a player gets selected instead of spawned
-                        {
-                            SpawnUnit();
-                        }
-                        else
-                        {
-                            if (path.Count != 0)
-                            {
-                                state = State.walking;
-                            }
-                        }
-                        */
                     }
 
                     break;
@@ -120,6 +106,7 @@ public class MouseControllerNew : MonoBehaviour
             {
                 PositionCharacterOnTile(path[0]);
                 path.RemoveAt(0);
+                selectedUnit.RemoveMovementPoint();
             }
 
             if (path.Count == 0)
@@ -137,16 +124,37 @@ public class MouseControllerNew : MonoBehaviour
 
     private void GetInRangeTiles()
     {
-        foreach (OverlayTile item in inRangeTiles)
-        {
-            item.HideTile();
-        }
+        ShowInRangeTiles(false);
 
         inRangeTiles = rangeFinder.GetTilesInRange(selectedUnit.GetCurrentTile(), 3);
+        List<OverlayTile> validTiles = new List<OverlayTile>();
 
         foreach (OverlayTile item in inRangeTiles)
         {
-            item.ShowTile();
+            if (pathFinder.FindPath(selectedUnit.GetCurrentTile(), item).Count <= selectedUnit.GetMovementPoints())
+            {
+                validTiles.Add(item);
+            }    
+        }
+
+        inRangeTiles = validTiles;
+
+        ShowInRangeTiles(true);
+    }
+
+    private void ShowInRangeTiles(bool show)
+    {
+        foreach (OverlayTile item in inRangeTiles)
+        {
+            if (show)
+            {
+                item.ShowTile();
+            }
+            else
+            {
+                item.HideTile();
+            }
+            
         }
     }
 
@@ -172,7 +180,10 @@ public class MouseControllerNew : MonoBehaviour
         {
             path = pathFinder.FindPath(selectedUnit.GetCurrentTile(), targetedOverlayTile, inRangeTiles);
 
-            ShowWalkingPathTiles();
+            if (path.Count <= selectedUnit.GetMovementPoints())
+            {
+                ShowWalkingPathTiles();
+            }
         }
         // The player is on a tile out of the walking range
         else
@@ -227,7 +238,9 @@ public class MouseControllerNew : MonoBehaviour
 
     private void PositionCharacterOnTile(OverlayTile tile)
     {
+        selectedUnit.GetCurrentTile().isBlocked = false;
         selectedUnit.transform.position = tile.transform.position;
         selectedUnit.SetCurrentTile(tile);
+        selectedUnit.GetCurrentTile().isBlocked = true;
     }
 }

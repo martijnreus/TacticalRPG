@@ -149,7 +149,9 @@ public class MouseController : MonoBehaviour
 
     private void PositionCharacterOnTile(OverlayTile tile)
     {
+        unit.GetCurrentTile().isBlocked = false;
         unit.transform.position = tile.transform.position;
         unit.SetCurrentTile(tile);
+        unit.GetCurrentTile().isBlocked = true;
     }
 }

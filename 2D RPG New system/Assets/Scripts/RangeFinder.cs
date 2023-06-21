@@ -15,7 +15,7 @@ public class RangeFinder
         List<OverlayTile> tileForPreviousStep = new List<OverlayTile>();
         tileForPreviousStep.Add(startingTile);
 
-        while(stepCount < range)
+        while (stepCount < range)
         {
             List<OverlayTile> surroundingTiles = new List<OverlayTile>();
 
