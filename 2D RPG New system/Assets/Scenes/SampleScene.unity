@@ -177,7 +177,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4389460775370264274, guid: 430c5e707dd3cc04ab9aa4b7cff85654, type: 3}
       propertyPath: movementPoints
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7573843386837366522, guid: 430c5e707dd3cc04ab9aa4b7cff85654, type: 3}
       propertyPath: m_Name
