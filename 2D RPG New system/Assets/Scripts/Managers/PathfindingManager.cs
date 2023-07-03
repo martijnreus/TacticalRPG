@@ -4,21 +4,16 @@ using UnityEngine;
 
 public class PathfindingManager : MonoBehaviour
 {
-    public PathFinder pathFinder;
+    public PathFinder pathFinder = new PathFinder();
     private List<OverlayTile> path = new List<OverlayTile>();
 
     private UnitSelectionManager unitSelectionManager;
-    private GameManager gameManager;
+    private RangeManager rangeManager;
 
     private void Awake()
     {
         unitSelectionManager = GetComponent<UnitSelectionManager>();
-        gameManager = GetComponent<GameManager>();
-    }
-
-    private void Start()
-    {
-        pathFinder = new PathFinder();
+        rangeManager = GetComponent<RangeManager>();
     }
 
     public List<OverlayTile> GetPath()
@@ -31,9 +26,9 @@ public class PathfindingManager : MonoBehaviour
         // Find the walking path from the current tile to the targeted tile
 
         // The mouse is on a tile the player can walk to
-        if (gameManager.inRangeTiles.Contains(tile) && !unitSelectionManager.GetSelectedUnit().GetIsWalking())
+        if (rangeManager.inRangeTiles.Contains(tile) && !unitSelectionManager.GetSelectedUnit().GetIsWalking())
         {
-            path = pathFinder.FindPath(unitSelectionManager.GetSelectedUnit().GetCurrentTile(), tile, gameManager.inRangeTiles);
+            path = pathFinder.FindPath(unitSelectionManager.GetSelectedUnit().GetCurrentTile(), tile, rangeManager.inRangeTiles);
 
             if (path.Count <= unitSelectionManager.GetSelectedUnit().GetMovementPoints())
             {
@@ -55,7 +50,7 @@ public class PathfindingManager : MonoBehaviour
     private void ShowWalkingPathTiles()
     {
         // Show the tiles along the walking path
-        foreach (OverlayTile item in gameManager.inRangeTiles)
+        foreach (OverlayTile item in rangeManager.inRangeTiles)
         {
             item.HideWalkingTile();
         }
@@ -74,7 +69,7 @@ public class PathfindingManager : MonoBehaviour
     private void HideWalkingPathTiles()
     {
         // Hide the tiles along the walking path
-        foreach (OverlayTile item in gameManager.inRangeTiles)
+        foreach (OverlayTile item in rangeManager.inRangeTiles)
         {
             item.HideWalkingTile();
         }

@@ -8,21 +8,13 @@ public class UnitMovementManager : MonoBehaviour
 
     private GameManager gameManager;
     private UnitSelectionManager unitSelectionManager;
+    private RangeManager rangeManager;
 
     private void Awake()
     {
         unitSelectionManager = GetComponent<UnitSelectionManager>();
         gameManager = GetComponent<GameManager>();
-    }
-
-    private void Start()
-    {
-        
-    }
-
-    private void Update()
-    {
-        // Handle unit movement
+        rangeManager = GetComponent<RangeManager>();
     }
 
     public IEnumerator MoveUnitAlongPath(List<OverlayTile> path) //TODO move to movement script
@@ -44,7 +36,7 @@ public class UnitMovementManager : MonoBehaviour
 
             if (path.Count == 0)
             {
-                gameManager.GetInRangeTiles();
+                rangeManager.GetInRangeTiles();
                 break;
             }
 

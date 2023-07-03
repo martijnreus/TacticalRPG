@@ -4,17 +4,14 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    private RangeFinder rangeFinder;
-
-    public List<OverlayTile> inRangeTiles = new List<OverlayTile>();
-
     private OverlayTile targetedOverlayTile;
+
+    public State state;
 
     private UnitSelectionManager unitSelectionManager;
     private UnitMovementManager unitMovementManager;
     private PathfindingManager pathfindingManager;
-
-    public State state;
+    private RangeManager rangeManager;
 
     public enum State
     {
@@ -28,12 +25,11 @@ public class GameManager : MonoBehaviour
         unitSelectionManager = GetComponent<UnitSelectionManager>();
         unitMovementManager = GetComponent<UnitMovementManager>();
         pathfindingManager = GetComponent<PathfindingManager>();
+        rangeManager = GetComponent<RangeManager>();
     }
 
     private void Start()
     {
-        rangeFinder = new RangeFinder();
-
         state = State.normal;
     }
 
@@ -50,7 +46,7 @@ public class GameManager : MonoBehaviour
             switch (state)
             {
                 case State.normal: //TODO here you should be able to select players or start walking or attacking
-                    GetInRangeTiles();
+                    rangeManager.GetInRangeTiles();
 
                     // When the cursor is hovering find a path to the cursor and showcase if valid
                     pathfindingManager.FindWalkingPath(targetedOverlayTile);
@@ -80,45 +76,6 @@ public class GameManager : MonoBehaviour
                     state = State.normal; //TODO dont have attacking yet so put it back to normal 
                     break;
             }
-        }
-    }
-
-    // Look to which tiles the player can walk
-    public void GetInRangeTiles()
-    {
-        HideInRangeTiles();
-
-        inRangeTiles = rangeFinder.GetTilesInRange(unitSelectionManager.GetSelectedUnit().GetCurrentTile(), unitSelectionManager.GetSelectedUnit().GetMovementPoints());
-        List<OverlayTile> validTiles = new List<OverlayTile>();
-
-        foreach (OverlayTile item in inRangeTiles)
-        {
-            if (pathfindingManager.pathFinder.FindPath(unitSelectionManager.GetSelectedUnit().GetCurrentTile(), item).Count <= unitSelectionManager.GetSelectedUnit().GetMovementPoints())
-            {
-                validTiles.Add(item);
-            }    
-        }
-
-        inRangeTiles = validTiles;
-
-        ShowInRangeTiles();
-    }
-
-    // Shows all the tiles that are in the inRangeTiles
-    private void ShowInRangeTiles()
-    {
-        foreach (OverlayTile item in inRangeTiles)
-        {
-            item.ShowTile();
-        }
-    }
-
-    // Hide all the tiles that are in the inRangeTiles
-    private void HideInRangeTiles()
-    {
-        foreach (OverlayTile item in inRangeTiles)
-        {
-            item.HideTile();
         }
     }
 
