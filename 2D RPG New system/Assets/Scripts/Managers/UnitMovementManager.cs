@@ -40,7 +40,7 @@ public class UnitMovementManager : MonoBehaviour
                 break;
             }
 
-            yield return new WaitForEndOfFrame();
+            yield return new WaitForSeconds(0);
         }
 
         unitSelectionManager.GetSelectedUnit().SetIsWalking(false);

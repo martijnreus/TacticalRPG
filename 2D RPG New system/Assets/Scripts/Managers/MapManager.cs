@@ -127,7 +127,7 @@ public class MapManager : MonoBehaviour
             neighbours.Add(tileToSearch[locationToCheck]);
         }
 
-        // Up
+        // Down
         locationToCheck = new Vector2Int(currentOverlayTile.gridLocation.x, currentOverlayTile.gridLocation.y - 1);
 
         if (tileToSearch.ContainsKey(locationToCheck))

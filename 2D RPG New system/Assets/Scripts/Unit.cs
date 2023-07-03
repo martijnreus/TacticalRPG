@@ -5,6 +5,7 @@ using UnityEngine;
 public class Unit : MonoBehaviour
 {
     [SerializeField] private int movementPoints;
+    [SerializeField] private bool isEnemy;
 
     private OverlayTile currentTile;
     private bool isWalking;
@@ -20,4 +21,6 @@ public class Unit : MonoBehaviour
     public int GetMovementPoints(){ return movementPoints; }
 
     public void RemoveMovementPoint() { movementPoints -= 1; }
+
+    public bool GetIsEnemy() { return isEnemy; }
 }
