@@ -14,6 +14,8 @@ public class OverlayTile : MonoBehaviour
     [HideInInspector] public Vector3Int gridLocation;
     [HideInInspector] public Vector2Int grid2DLocation { get { return new Vector2Int(gridLocation.x, gridLocation.y); } }
 
+    [HideInInspector] public Unit unitOnTile;
+
     public void ShowTile()
     {
         gameObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0.4f);

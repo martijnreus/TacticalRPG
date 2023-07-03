@@ -2,12 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MouseControllerNew : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
     [SerializeField] private float speed;
     [SerializeField] private GameObject characterPrefab;
 
-    private Unit selectedUnit;
     private Unit[] units;
 
     private PathFinder pathFinder;
@@ -16,6 +15,8 @@ public class MouseControllerNew : MonoBehaviour
     private List<OverlayTile> inRangeTiles = new List<OverlayTile>();
 
     private OverlayTile targetedOverlayTile;
+
+    private UnitSelectionManager unitSelectionManager;
 
     private State state;
 
@@ -26,13 +27,19 @@ public class MouseControllerNew : MonoBehaviour
         attacking,
     }
 
+    private void Awake()
+    {
+        unitSelectionManager = GetComponent<UnitSelectionManager>();
+    }
+
     private void Start()
     {
         pathFinder = new PathFinder();
         rangeFinder = new RangeFinder();
 
-        units = FindObjectsOfType<Unit>();
-        selectedUnit = units[0];
+        //units = FindObjectsOfType<Unit>();
+        //selectedUnit = units[0];
+
 
         state = State.normal;
     }
@@ -57,17 +64,9 @@ public class MouseControllerNew : MonoBehaviour
 
                     if (Input.GetMouseButtonDown(0))
                     {
-                        bool hasPlayer = false;
-                        Unit newUnit = GetUnit();
+                        bool hasPlayer = unitSelectionManager.DoPlayerSelection(targetedOverlayTile);
 
-                        // select a player when clicked on
-                        if (newUnit != null)
-                        {
-                            hasPlayer = true;
-                            SelectUnit(newUnit);
-                        }
-
-                        if (path.Count != 0 && path.Count <= selectedUnit.GetMovementPoints() && hasPlayer == false)
+                        if (path.Count != 0 && path.Count <= unitSelectionManager.GetSelectedUnit().GetMovementPoints() && hasPlayer == false)
                         {
                             state = State.walking;
                         }
@@ -77,7 +76,7 @@ public class MouseControllerNew : MonoBehaviour
 
                 case State.walking:
 
-                    if (!selectedUnit.GetIsWalking())
+                    if (!unitSelectionManager.GetSelectedUnit().GetIsWalking())
                     {
                         StartCoroutine(MoveUnitAlongPath());
                     }
@@ -93,19 +92,19 @@ public class MouseControllerNew : MonoBehaviour
 
     private IEnumerator MoveUnitAlongPath() //TODO move to movement script
     {
-        selectedUnit.SetIsWalking(true);
+        unitSelectionManager.GetSelectedUnit().SetIsWalking(true);
 
         float step = speed * Time.deltaTime;
 
         while (true)
         {
-            selectedUnit.transform.position = Vector2.MoveTowards(selectedUnit.transform.position, path[0].transform.position, step);
+            unitSelectionManager.GetSelectedUnit().transform.position = Vector2.MoveTowards(unitSelectionManager.GetSelectedUnit().transform.position, path[0].transform.position, step);
 
-            if (Vector2.Distance(selectedUnit.transform.position, path[0].transform.position) < 0.00001f)
+            if (Vector2.Distance(unitSelectionManager.GetSelectedUnit().transform.position, path[0].transform.position) < 0.00001f)
             {
                 PositionCharacterOnTile(path[0]);
                 path.RemoveAt(0);
-                selectedUnit.RemoveMovementPoint();
+                unitSelectionManager.GetSelectedUnit().RemoveMovementPoint();
             }
 
             if (path.Count == 0)
@@ -117,7 +116,7 @@ public class MouseControllerNew : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
-        selectedUnit.SetIsWalking(false);
+        unitSelectionManager.GetSelectedUnit().SetIsWalking(false);
         state = State.normal;
     }
 
@@ -126,12 +125,12 @@ public class MouseControllerNew : MonoBehaviour
     {
         HideInRangeTiles();
 
-        inRangeTiles = rangeFinder.GetTilesInRange(selectedUnit.GetCurrentTile(), selectedUnit.GetMovementPoints());
+        inRangeTiles = rangeFinder.GetTilesInRange(unitSelectionManager.GetSelectedUnit().GetCurrentTile(), unitSelectionManager.GetSelectedUnit().GetMovementPoints());
         List<OverlayTile> validTiles = new List<OverlayTile>();
 
         foreach (OverlayTile item in inRangeTiles)
         {
-            if (pathFinder.FindPath(selectedUnit.GetCurrentTile(), item).Count <= selectedUnit.GetMovementPoints())
+            if (pathFinder.FindPath(unitSelectionManager.GetSelectedUnit().GetCurrentTile(), item).Count <= unitSelectionManager.GetSelectedUnit().GetMovementPoints())
             {
                 validTiles.Add(item);
             }    
@@ -178,11 +177,11 @@ public class MouseControllerNew : MonoBehaviour
     private void FindWalkingPath() 
     {
         // The mouse is on a tile the player can walk to
-        if (inRangeTiles.Contains(targetedOverlayTile) && !selectedUnit.GetIsWalking())
+        if (inRangeTiles.Contains(targetedOverlayTile) && !unitSelectionManager.GetSelectedUnit().GetIsWalking())
         {
-            path = pathFinder.FindPath(selectedUnit.GetCurrentTile(), targetedOverlayTile, inRangeTiles);
+            path = pathFinder.FindPath(unitSelectionManager.GetSelectedUnit().GetCurrentTile(), targetedOverlayTile, inRangeTiles);
 
-            if (path.Count <= selectedUnit.GetMovementPoints())
+            if (path.Count <= unitSelectionManager.GetSelectedUnit().GetMovementPoints())
             {
                 ShowWalkingPathTiles();
             }
@@ -190,7 +189,7 @@ public class MouseControllerNew : MonoBehaviour
         // The mouse is on a tile out of the walking range
         else
         {
-            if (selectedUnit != null && !selectedUnit.GetIsWalking())
+            if (unitSelectionManager.GetSelectedUnit() != null && !unitSelectionManager.GetSelectedUnit().GetIsWalking())
             {
                 path = new List<OverlayTile>();
             }
@@ -208,7 +207,7 @@ public class MouseControllerNew : MonoBehaviour
 
         if (path.Count > 0)
         {
-            selectedUnit.GetCurrentTile().ShowWalkingTile();
+            unitSelectionManager.GetSelectedUnit().GetCurrentTile().ShowWalkingTile();
         }
 
         for (int i = 0; i < path.Count; i++)
@@ -227,34 +226,16 @@ public class MouseControllerNew : MonoBehaviour
 
     private void SpawnUnit()
     {
-        selectedUnit = Instantiate(characterPrefab).GetComponent<Unit>(); //TODO make this select the player
+        Instantiate(characterPrefab).GetComponent<Unit>(); //TODO make this select the player
         PositionCharacterOnTile(targetedOverlayTile);
         GetInRangeTiles();
     }
 
-    private Unit GetUnit()
-    {
-        // check if a player has been clicked and return true if there is a new player selected
-        foreach (Unit unit in units)
-        {
-            if (targetedOverlayTile == unit.GetCurrentTile())
-            {
-                return unit;
-            }
-        }
-        return null;
-    }
-
-    private void SelectUnit(Unit unit)
-    {
-        selectedUnit = unit;
-    }
-
     private void PositionCharacterOnTile(OverlayTile tile)
     {
-        selectedUnit.GetCurrentTile().isBlocked = false;
-        selectedUnit.transform.position = tile.transform.position;
-        selectedUnit.SetCurrentTile(tile);
-        selectedUnit.GetCurrentTile().isBlocked = true;
+        unitSelectionManager.GetSelectedUnit().GetCurrentTile().isBlocked = false;
+        unitSelectionManager.GetSelectedUnit().transform.position = tile.transform.position;
+        unitSelectionManager.GetSelectedUnit().SetCurrentTile(tile);
+        unitSelectionManager.GetSelectedUnit().GetCurrentTile().isBlocked = true;
     }
 }
