@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class OverlayTile : MonoBehaviour
 {
+    // Pathfinding stuff
     [HideInInspector] public int GCost;
     [HideInInspector] public int HCost;
     [HideInInspector] public int FCost { get { return GCost + HCost; } }
+    [HideInInspector] public OverlayTile parent;
 
+    // Grid information
     [HideInInspector] public bool isBlocked;
 
-    [HideInInspector] public OverlayTile parent;
     [HideInInspector] public Vector3Int gridLocation;
     [HideInInspector] public Vector2Int grid2DLocation { get { return new Vector2Int(gridLocation.x, gridLocation.y); } }
-
-    [HideInInspector] public Unit unitOnTile;
 
     public void ShowTile()
     {

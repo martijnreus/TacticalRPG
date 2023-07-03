@@ -4,18 +4,17 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField] private float speed;
-    [SerializeField] private GameObject characterPrefab;
-
-    private PathFinder pathFinder;
+    //private PathFinder pathFinder;
     private RangeFinder rangeFinder;
-    private List<OverlayTile> path = new List<OverlayTile>();
-    private List<OverlayTile> inRangeTiles = new List<OverlayTile>();
+
+    //private List<OverlayTile> path = new List<OverlayTile>();
+    public List<OverlayTile> inRangeTiles = new List<OverlayTile>();
 
     private OverlayTile targetedOverlayTile;
 
     private UnitSelectionManager unitSelectionManager;
     private UnitMovementManager unitMovementManager;
+    private PathfindingManager pathfindingManager;
 
     public State state;
 
@@ -30,11 +29,12 @@ public class GameManager : MonoBehaviour
     {
         unitSelectionManager = GetComponent<UnitSelectionManager>();
         unitMovementManager = GetComponent<UnitMovementManager>();
+        pathfindingManager = GetComponent<PathfindingManager>();
     }
 
     private void Start()
     {
-        pathFinder = new PathFinder();
+        //pathFinder = new PathFinder();
         rangeFinder = new RangeFinder();
 
         state = State.normal;
@@ -56,13 +56,13 @@ public class GameManager : MonoBehaviour
                     GetInRangeTiles();
 
                     // When the cursor is hovering find a path to the cursor and showcase if valid
-                    FindWalkingPath();
+                    pathfindingManager.FindWalkingPath(targetedOverlayTile);
 
                     if (Input.GetMouseButtonDown(0))
                     {
                         bool hasPlayer = unitSelectionManager.DoPlayerSelection(targetedOverlayTile);
 
-                        if (path.Count != 0 && path.Count <= unitSelectionManager.GetSelectedUnit().GetMovementPoints() && hasPlayer == false)
+                        if (pathfindingManager.GetPath().Count != 0 && pathfindingManager.GetPath().Count <= unitSelectionManager.GetSelectedUnit().GetMovementPoints() && hasPlayer == false)
                         {
                             state = State.walking;
                         }
@@ -74,7 +74,7 @@ public class GameManager : MonoBehaviour
 
                     if (!unitSelectionManager.GetSelectedUnit().GetIsWalking())
                     {
-                        StartCoroutine(unitMovementManager.MoveUnitAlongPath(path));
+                        StartCoroutine(unitMovementManager.MoveUnitAlongPath(pathfindingManager.GetPath()));
                     }
                     break;
 
@@ -96,7 +96,7 @@ public class GameManager : MonoBehaviour
 
         foreach (OverlayTile item in inRangeTiles)
         {
-            if (pathFinder.FindPath(unitSelectionManager.GetSelectedUnit().GetCurrentTile(), item).Count <= unitSelectionManager.GetSelectedUnit().GetMovementPoints())
+            if (pathfindingManager.pathFinder.FindPath(unitSelectionManager.GetSelectedUnit().GetCurrentTile(), item).Count <= unitSelectionManager.GetSelectedUnit().GetMovementPoints())
             {
                 validTiles.Add(item);
             }    
@@ -140,6 +140,7 @@ public class GameManager : MonoBehaviour
         return null;
     }
 
+    /*
     private void FindWalkingPath() 
     {
         // The mouse is on a tile the player can walk to
@@ -189,4 +190,5 @@ public class GameManager : MonoBehaviour
             item.HideWalkingTile();
         }
     }
+    */
 }
