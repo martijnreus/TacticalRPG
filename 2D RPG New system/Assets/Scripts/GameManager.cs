@@ -7,8 +7,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float speed;
     [SerializeField] private GameObject characterPrefab;
 
-    private Unit[] units;
-
     private PathFinder pathFinder;
     private RangeFinder rangeFinder;
     private List<OverlayTile> path = new List<OverlayTile>();
@@ -17,10 +15,11 @@ public class GameManager : MonoBehaviour
     private OverlayTile targetedOverlayTile;
 
     private UnitSelectionManager unitSelectionManager;
+    private UnitMovementManager unitMovementManager;
 
-    private State state;
+    public State state;
 
-    private enum State
+    public enum State
     {
         normal,
         walking,
@@ -30,16 +29,13 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         unitSelectionManager = GetComponent<UnitSelectionManager>();
+        unitMovementManager = GetComponent<UnitMovementManager>();
     }
 
     private void Start()
     {
         pathFinder = new PathFinder();
         rangeFinder = new RangeFinder();
-
-        //units = FindObjectsOfType<Unit>();
-        //selectedUnit = units[0];
-
 
         state = State.normal;
     }
@@ -78,7 +74,8 @@ public class GameManager : MonoBehaviour
 
                     if (!unitSelectionManager.GetSelectedUnit().GetIsWalking())
                     {
-                        StartCoroutine(MoveUnitAlongPath());
+                        Debug.Log(unitMovementManager);
+                        StartCoroutine(unitMovementManager.MoveUnitAlongPath(path));
                     }
                     break;
 
@@ -121,7 +118,7 @@ public class GameManager : MonoBehaviour
     }
 
     // Look to which tiles the player can walk
-    private void GetInRangeTiles()
+    public void GetInRangeTiles()
     {
         HideInRangeTiles();
 
