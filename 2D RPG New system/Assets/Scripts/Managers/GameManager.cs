@@ -4,10 +4,8 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    //private PathFinder pathFinder;
     private RangeFinder rangeFinder;
 
-    //private List<OverlayTile> path = new List<OverlayTile>();
     public List<OverlayTile> inRangeTiles = new List<OverlayTile>();
 
     private OverlayTile targetedOverlayTile;
@@ -34,7 +32,6 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        //pathFinder = new PathFinder();
         rangeFinder = new RangeFinder();
 
         state = State.normal;
@@ -139,56 +136,4 @@ public class GameManager : MonoBehaviour
 
         return null;
     }
-
-    /*
-    private void FindWalkingPath() 
-    {
-        // The mouse is on a tile the player can walk to
-        if (inRangeTiles.Contains(targetedOverlayTile) && !unitSelectionManager.GetSelectedUnit().GetIsWalking())
-        {
-            path = pathFinder.FindPath(unitSelectionManager.GetSelectedUnit().GetCurrentTile(), targetedOverlayTile, inRangeTiles);
-
-            if (path.Count <= unitSelectionManager.GetSelectedUnit().GetMovementPoints())
-            {
-                ShowWalkingPathTiles();
-            }
-        }
-        // The mouse is on a tile out of the walking range
-        else
-        {
-            if (unitSelectionManager.GetSelectedUnit() != null && !unitSelectionManager.GetSelectedUnit().GetIsWalking())
-            {
-                path = new List<OverlayTile>();
-            }
-
-            HideWalkingPathTiles();
-        }
-    }
-
-    private void ShowWalkingPathTiles() //TODO move to walking visual script
-    {
-        foreach (OverlayTile item in inRangeTiles)
-        {
-            item.HideWalkingTile();
-        }
-
-        if (path.Count > 0)
-        {
-            unitSelectionManager.GetSelectedUnit().GetCurrentTile().ShowWalkingTile();
-        }
-
-        for (int i = 0; i < path.Count; i++)
-        {
-            path[i].ShowWalkingTile();
-        }
-    }
-
-    private void HideWalkingPathTiles() //TODO move to walking visual script
-    {
-        foreach (OverlayTile item in inRangeTiles)
-        {
-            item.HideWalkingTile();
-        }
-    }
-    */
 }

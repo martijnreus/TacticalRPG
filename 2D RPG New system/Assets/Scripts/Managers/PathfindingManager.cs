@@ -21,11 +21,6 @@ public class PathfindingManager : MonoBehaviour
         pathFinder = new PathFinder();
     }
 
-    private void Update()
-    {
-        // Handle pathfinding
-    }
-
     public List<OverlayTile> GetPath()
     {
         return path;
