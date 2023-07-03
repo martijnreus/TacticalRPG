@@ -55,7 +55,7 @@ public class UnitMovementManager : MonoBehaviour
         gameManager.state = GameManager.State.normal;
     }
 
-    private void PositionCharacterOnTile(OverlayTile tile)
+    public void PositionCharacterOnTile(OverlayTile tile)
     {
         unitSelectionManager.GetSelectedUnit().GetCurrentTile().isBlocked = false;
         unitSelectionManager.GetSelectedUnit().transform.position = tile.transform.position;

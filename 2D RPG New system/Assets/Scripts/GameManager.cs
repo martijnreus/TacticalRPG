@@ -74,7 +74,6 @@ public class GameManager : MonoBehaviour
 
                     if (!unitSelectionManager.GetSelectedUnit().GetIsWalking())
                     {
-                        Debug.Log(unitMovementManager);
                         StartCoroutine(unitMovementManager.MoveUnitAlongPath(path));
                     }
                     break;
@@ -85,36 +84,6 @@ public class GameManager : MonoBehaviour
                     break;
             }
         }
-    }
-
-    private IEnumerator MoveUnitAlongPath() //TODO move to movement script
-    {
-        unitSelectionManager.GetSelectedUnit().SetIsWalking(true);
-
-        float step = speed * Time.deltaTime;
-
-        while (true)
-        {
-            unitSelectionManager.GetSelectedUnit().transform.position = Vector2.MoveTowards(unitSelectionManager.GetSelectedUnit().transform.position, path[0].transform.position, step);
-
-            if (Vector2.Distance(unitSelectionManager.GetSelectedUnit().transform.position, path[0].transform.position) < 0.00001f)
-            {
-                PositionCharacterOnTile(path[0]);
-                path.RemoveAt(0);
-                unitSelectionManager.GetSelectedUnit().RemoveMovementPoint();
-            }
-
-            if (path.Count == 0)
-            {
-                GetInRangeTiles();
-                break;
-            }
-
-            yield return new WaitForEndOfFrame();
-        }
-
-        unitSelectionManager.GetSelectedUnit().SetIsWalking(false);
-        state = State.normal;
     }
 
     // Look to which tiles the player can walk
@@ -219,20 +188,5 @@ public class GameManager : MonoBehaviour
         {
             item.HideWalkingTile();
         }
-    }
-
-    private void SpawnUnit()
-    {
-        Instantiate(characterPrefab).GetComponent<Unit>(); //TODO make this select the player
-        PositionCharacterOnTile(targetedOverlayTile);
-        GetInRangeTiles();
-    }
-
-    private void PositionCharacterOnTile(OverlayTile tile)
-    {
-        unitSelectionManager.GetSelectedUnit().GetCurrentTile().isBlocked = false;
-        unitSelectionManager.GetSelectedUnit().transform.position = tile.transform.position;
-        unitSelectionManager.GetSelectedUnit().SetCurrentTile(tile);
-        unitSelectionManager.GetSelectedUnit().GetCurrentTile().isBlocked = true;
     }
 }
