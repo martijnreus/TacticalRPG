@@ -43,45 +43,45 @@ public class GameManager : MonoBehaviour
             targetedOverlayTile = focusedTileUnit.Value.collider.gameObject.GetComponent<OverlayTile>();
             // Move mouse cursor to the focusedTilePositiom
             transform.position = targetedOverlayTile.transform.position;
+        }
 
-            switch (state)
-            {
-                case State.waiting:
+        switch (state)
+        {
+            case State.waiting:
         
-                    state = State.normal;
-                    break;
+                state = State.normal;
+                break;
 
-                case State.normal: //TODO here you should be able to select players or start walking or attacking
-                    rangeManager.GetInRangeTiles();
+            case State.normal: //TODO here you should be able to select players or start walking or attacking
+                rangeManager.GetInRangeTiles();
 
-                    // When the cursor is hovering find a path to the cursor and showcase if valid
-                    pathfindingManager.FindWalkingPath(targetedOverlayTile);
+                // When the cursor is hovering find a path to the cursor and showcase if valid
+                pathfindingManager.FindWalkingPath(targetedOverlayTile);
 
-                    if (Input.GetMouseButtonDown(0))
+                if (Input.GetMouseButtonDown(0))
+                {
+                    bool hasPlayer = unitSelectionManager.DoPlayerSelection(targetedOverlayTile);
+
+                    if (pathfindingManager.GetPath().Count != 0 && pathfindingManager.GetPath().Count <= unitSelectionManager.GetSelectedUnit().GetMovementPoints() && hasPlayer == false)
                     {
-                        bool hasPlayer = unitSelectionManager.DoPlayerSelection(targetedOverlayTile);
-
-                        if (pathfindingManager.GetPath().Count != 0 && pathfindingManager.GetPath().Count <= unitSelectionManager.GetSelectedUnit().GetMovementPoints() && hasPlayer == false)
-                        {
-                            state = State.walking;
-                        }
+                        state = State.walking;
                     }
+                }
 
-                    break;
+                break;
 
-                case State.walking:
+            case State.walking:
 
-                    if (!unitSelectionManager.GetSelectedUnit().GetIsWalking())
-                    {
-                        StartCoroutine(unitMovementManager.MoveUnitAlongPath(pathfindingManager.GetPath()));
-                    }
-                    break;
+                if (!unitSelectionManager.GetSelectedUnit().GetIsWalking())
+                {
+                    StartCoroutine(unitMovementManager.MoveUnitAlongPath(pathfindingManager.GetPath()));
+                }
+                break;
 
-                case State.attacking:
+            case State.attacking:
 
-                    state = State.normal; //TODO dont have attacking yet so put it back to normal 
-                    break;
-            }
+                state = State.normal; //TODO dont have attacking yet so put it back to normal 
+                break;
         }
     }
 
