@@ -21,10 +21,10 @@ public class UnitMovementManager : MonoBehaviour
     {
         unitSelectionManager.GetSelectedUnit().SetIsWalking(true);
 
-        float step = speed * Time.deltaTime;
-
         while (true)
         {
+            float step = speed * Time.deltaTime;
+
             unitSelectionManager.GetSelectedUnit().transform.position = Vector2.MoveTowards(unitSelectionManager.GetSelectedUnit().transform.position, path[0].transform.position, step);
 
             if (Vector2.Distance(unitSelectionManager.GetSelectedUnit().transform.position, path[0].transform.position) < 0.00001f)
@@ -40,7 +40,7 @@ public class UnitMovementManager : MonoBehaviour
                 break;
             }
 
-            yield return new WaitForSeconds(0);
+            yield return new WaitForEndOfFrame();
         }
 
         unitSelectionManager.GetSelectedUnit().SetIsWalking(false);

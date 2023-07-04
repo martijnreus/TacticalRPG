@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
 
     public enum State
     {
+        waiting,
         normal,
         walking,
         attacking,
@@ -30,7 +31,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        state = State.normal;
+        state = State.waiting;
     }
 
     private void Update()
@@ -45,6 +46,11 @@ public class GameManager : MonoBehaviour
 
             switch (state)
             {
+                case State.waiting:
+        
+                    state = State.normal;
+                    break;
+
                 case State.normal: //TODO here you should be able to select players or start walking or attacking
                     rangeManager.GetInRangeTiles();
 
