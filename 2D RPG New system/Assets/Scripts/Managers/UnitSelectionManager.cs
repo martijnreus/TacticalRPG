@@ -7,8 +7,6 @@ public class UnitSelectionManager : MonoBehaviour
     private Unit selectedUnit;
     private Unit[] units;
 
-    private MapManager mapManager;
-
     private void Start()
     {
         units = FindObjectsOfType<Unit>();
@@ -20,7 +18,7 @@ public class UnitSelectionManager : MonoBehaviour
         Unit newUnit = GetUnitAtTile(tile);
 
         // select a player when clicked on
-        if (newUnit != null)
+        if (newUnit != null && !newUnit.GetIsEnemy())
         {
             SelectUnit(newUnit);
             return true;
