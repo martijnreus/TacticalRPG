@@ -87,7 +87,7 @@ public class GameManager : MonoBehaviour
 
                         if (Input.GetKeyDown(KeyCode.K))
                         {
-                            state = State.attacking;
+                            StartAttacking();
                         }
 
                         if (Input.GetKeyDown(KeyCode.P))
@@ -166,7 +166,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void EndTurn()
+    public void EndTurn()
     {
         foreach(Unit unit in playerTeam)
         {
@@ -175,5 +175,10 @@ public class GameManager : MonoBehaviour
 
         //End turn
         team = Team.enemy;
+    }
+
+    public void StartAttacking()
+    {
+        state = State.attacking;
     }
 }
