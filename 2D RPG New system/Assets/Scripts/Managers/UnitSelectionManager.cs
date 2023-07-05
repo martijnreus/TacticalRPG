@@ -10,7 +10,17 @@ public class UnitSelectionManager : MonoBehaviour
     private void Start()
     {
         units = FindObjectsOfType<Unit>();
-        selectedUnit = units[0];
+        SelectFirstPlayer();
+    }
+
+    private void SelectFirstPlayer()
+    {
+        do
+        {
+            selectedUnit = units[Random.Range(0, units.Length)];
+        }
+        while (selectedUnit.GetIsEnemy());
+        
     }
 
     public bool DoPlayerSelection(OverlayTile tile)

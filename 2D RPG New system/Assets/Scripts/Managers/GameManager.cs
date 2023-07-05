@@ -14,8 +14,8 @@ public class GameManager : MonoBehaviour
     private PathfindingManager pathfindingManager;
     private RangeManager rangeManager;
 
-    List<Unit> playerTeam = new List<Unit>();
-    List<Unit> enemyTeam = new List<Unit>();
+    private List<Unit> playerTeam = new List<Unit>();
+    private List<Unit> enemyTeam = new List<Unit>();
 
     private float timer = 3f;
 
