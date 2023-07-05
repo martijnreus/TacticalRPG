@@ -85,6 +85,11 @@ public class GameManager : MonoBehaviour
                             }
                         }
 
+                        if (Input.GetKeyDown(KeyCode.K))
+                        {
+                            state = State.attacking;
+                        }
+
                         if (Input.GetKeyDown(KeyCode.P))
                         {
                             EndTurn();
@@ -101,7 +106,14 @@ public class GameManager : MonoBehaviour
                         break;
 
                     case State.attacking:
-                        state = State.normal; //TODO dont have attacking yet so put it back to normal 
+
+                        rangeManager.HideInRangeTiles();
+
+                        if (Input.GetKeyDown(KeyCode.K))
+                        {
+                            state = State.normal;
+                        }
+                        //TODO dont have attacking yet so put it back to normal 
                         break;
                 }
                 break;

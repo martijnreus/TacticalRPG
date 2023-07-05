@@ -18,7 +18,7 @@ public class OverlayTile : MonoBehaviour
 
     public void ShowTile()
     {
-        gameObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0.4f);
+        gameObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0.6f);
     }
 
     public void HideTile()
@@ -41,5 +41,21 @@ public class OverlayTile : MonoBehaviour
 
         Color currentColor = walkingTile.color;
         walkingTile.color = new Color(currentColor.r, currentColor.g, currentColor.b, 0);
+    }
+
+    public void ShowAttackingTile()
+    {
+        SpriteRenderer attackingTile = GetComponentsInChildren<SpriteRenderer>()[2];
+
+        Color currentColor = attackingTile.color;
+        attackingTile.color = new Color(currentColor.r, currentColor.g, currentColor.b, 1);
+    }
+
+    public void HideAttackingTile()
+    {
+        SpriteRenderer attackingTile = GetComponentsInChildren<SpriteRenderer>()[2];
+
+        Color currentColor = attackingTile.color;
+        attackingTile.color = new Color(currentColor.r, currentColor.g, currentColor.b, 0);
     }
 }

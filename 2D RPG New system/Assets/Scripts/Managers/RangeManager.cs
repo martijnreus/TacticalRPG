@@ -46,7 +46,7 @@ public class RangeManager : MonoBehaviour
         }
     }
 
-    private void HideInRangeTiles()
+    public void HideInRangeTiles()
     {
         // Hide in-range tiles
         foreach (OverlayTile item in inRangeTiles)
