@@ -10,6 +10,13 @@ public class Unit : MonoBehaviour
     private OverlayTile currentTile;
     private bool isWalking;
 
+    private int saveMovementPoints;
+
+    private void Start()
+    {
+        saveMovementPoints = movementPoints;
+    }
+
     public OverlayTile GetCurrentTile() { return currentTile; }
 
     public void SetCurrentTile(OverlayTile tile) { currentTile = tile; }
@@ -23,4 +30,6 @@ public class Unit : MonoBehaviour
     public void RemoveMovementPoint() { movementPoints -= 1; }
 
     public bool GetIsEnemy() { return isEnemy; }
+
+    public void ResetMovementPoints() { movementPoints = saveMovementPoints; }
 }

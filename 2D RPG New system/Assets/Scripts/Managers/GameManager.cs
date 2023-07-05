@@ -7,11 +7,23 @@ public class GameManager : MonoBehaviour
     private OverlayTile targetedOverlayTile;
 
     public State state;
+    public Team team;
 
     private UnitSelectionManager unitSelectionManager;
     private UnitMovementManager unitMovementManager;
     private PathfindingManager pathfindingManager;
     private RangeManager rangeManager;
+
+    List<Unit> playerTeam = new List<Unit>();
+    List<Unit> enemyTeam = new List<Unit>();
+
+    private float timer = 3f;
+
+    public enum Team
+    {
+        player,
+        enemy,
+    }
 
     public enum State
     {
@@ -32,6 +44,8 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         state = State.waiting;
+
+        AssignTeams();
     }
 
     private void Update()
@@ -45,47 +59,70 @@ public class GameManager : MonoBehaviour
             transform.position = targetedOverlayTile.transform.position;
         }
 
-        switch (state)
+        switch (team)
         {
-            case State.waiting:
-        
-                state = State.normal;
-                break;
-
-            case State.normal: //TODO here you should be able to select players or start walking or attacking
-                rangeManager.GetInRangeTiles();
-
-                // When the cursor is hovering find a path to the cursor and showcase if valid
-                pathfindingManager.FindWalkingPath(targetedOverlayTile);
-
-                if (Input.GetMouseButtonDown(0))
+            case Team.player:
+                switch (state)
                 {
-                    bool hasPlayer = unitSelectionManager.DoPlayerSelection(targetedOverlayTile);
 
-                    if (pathfindingManager.GetPath().Count != 0 && pathfindingManager.GetPath().Count <= unitSelectionManager.GetSelectedUnit().GetMovementPoints() && hasPlayer == false)
-                    {
-                        state = State.walking;
-                    }
+                    case State.waiting:
+                        state = State.normal;
+                        break;
+
+                    case State.normal: //TODO here you should be able to select players or start walking or attacking
+                        rangeManager.GetInRangeTiles();
+
+                        // When the cursor is hovering find a path to the cursor and showcase if valid
+                        pathfindingManager.FindWalkingPath(targetedOverlayTile);
+
+                        if (Input.GetMouseButtonDown(0))
+                        {
+                            bool hasPlayer = unitSelectionManager.DoPlayerSelection(targetedOverlayTile);
+
+                            if (pathfindingManager.GetPath().Count != 0 && pathfindingManager.GetPath().Count <= unitSelectionManager.GetSelectedUnit().GetMovementPoints() && hasPlayer == false)
+                            {
+                                state = State.walking;
+                            }
+                        }
+
+                        if (Input.GetKeyDown(KeyCode.P))
+                        {
+                            EndTurn();
+                        }
+
+                        break;
+
+                    case State.walking:
+                        // start walking when in this state
+                        if (!unitSelectionManager.GetSelectedUnit().GetIsWalking())
+                        {
+                            StartCoroutine(unitMovementManager.MoveUnitAlongPath(pathfindingManager.GetPath()));
+                        }
+                        break;
+
+                    case State.attacking:
+                        state = State.normal; //TODO dont have attacking yet so put it back to normal 
+                        break;
                 }
-
                 break;
 
-            case State.walking:
+            case Team.enemy:
+                // Run enemy AI now wait 3 seconds to return to player turn
 
-                if (!unitSelectionManager.GetSelectedUnit().GetIsWalking())
+                if (timer > 0) 
                 {
-                    StartCoroutine(unitMovementManager.MoveUnitAlongPath(pathfindingManager.GetPath()));
+                    timer -= Time.deltaTime;
                 }
-                break;
-
-            case State.attacking:
-
-                state = State.normal; //TODO dont have attacking yet so put it back to normal 
+                else
+                {
+                    team = Team.player;
+                    timer = 3f;
+                }
                 break;
         }
     }
 
-    public RaycastHit2D? GetFocusedOnTile()
+    private RaycastHit2D? GetFocusedOnTile()
     {
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
@@ -98,5 +135,33 @@ public class GameManager : MonoBehaviour
         }
 
         return null;
+    }
+
+    private void AssignTeams()
+    {
+        Unit[] units = FindObjectsOfType<Unit>();
+
+        foreach (Unit unit in units)
+        {
+            if (!unit.GetIsEnemy())
+            {
+                playerTeam.Add(unit);
+            }
+            else
+            {
+                enemyTeam.Add(unit);
+            }
+        }
+    }
+
+    private void EndTurn()
+    {
+        foreach(Unit unit in playerTeam)
+        {
+            unit.ResetMovementPoints();
+        }
+
+        //End turn
+        team = Team.enemy;
     }
 }
