@@ -50,13 +50,8 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        if (GetFocusedOnTile() != null)
-        {
-            targetedOverlayTile = GetFocusedOnTile();
-            // Move mouse cursor to the focusedTilePosition
-            transform.position = targetedOverlayTile.transform.position;
-        }
-        
+        targetedOverlayTile = GetFocusedOnTile();
+        SetCursorPosition(targetedOverlayTile);
 
         switch (team)
         {
@@ -137,6 +132,20 @@ public class GameManager : MonoBehaviour
     {
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         return MapManager.Instance.GetOverlayTile(mousePos);
+    }
+
+    private void SetCursorPosition(OverlayTile tile)
+    {
+        if (tile != null)
+        {
+            // Move mouse cursor to the focusedTilePosition
+            transform.position = tile.transform.position;
+        }
+        else
+        {
+            // Set cursor out of frame
+            transform.position = new Vector3(999, 999, 999);
+        }
     }
 
     private void AssignTeams()
