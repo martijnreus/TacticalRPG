@@ -153,4 +153,17 @@ public class MapManager : MonoBehaviour
 
         return neighbours;
     }
+
+    public OverlayTile GetOverlayTile(Vector3 position)
+    {
+        Vector2Int tilePosition = new Vector2Int((int)Mathf.Floor(position.x), (int)Mathf.Floor(position.y));
+
+        if (map.ContainsKey(tilePosition))
+        {
+            return map[tilePosition];
+        }
+
+        return null;
+        
+    }
 }

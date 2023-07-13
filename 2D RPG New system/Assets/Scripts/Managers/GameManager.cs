@@ -50,14 +50,13 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        RaycastHit2D? focusedTileUnit = GetFocusedOnTile();
-
-        if (focusedTileUnit.HasValue)
+        if (GetFocusedOnTile() != null)
         {
-            targetedOverlayTile = focusedTileUnit.Value.collider.gameObject.GetComponent<OverlayTile>();
-            // Move mouse cursor to the focusedTilePositiom
+            targetedOverlayTile = GetFocusedOnTile();
+            // Move mouse cursor to the focusedTilePosition
             transform.position = targetedOverlayTile.transform.position;
         }
+        
 
         switch (team)
         {
@@ -134,19 +133,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private RaycastHit2D? GetFocusedOnTile()
+    private OverlayTile GetFocusedOnTile()
     {
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
-
-        RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
-
-        if (hit == true)
-        {
-            return hit;
-        }
-
-        return null;
+        return MapManager.Instance.GetOverlayTile(mousePos);
     }
 
     private void AssignTeams()
