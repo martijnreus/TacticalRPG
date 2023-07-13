@@ -3640,6 +3640,7 @@ GameObject:
   - component: {fileID: 1346612850}
   - component: {fileID: 1346612851}
   - component: {fileID: 1346612852}
+  - component: {fileID: 1346612853}
   m_Layer: 0
   m_Name: Cursor
   m_TagString: Untagged
@@ -3728,6 +3729,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 0
   team: 0
+  spell: {fileID: 11400000, guid: ed9193e394066224ab8da870536b9413, type: 2}
 --- !u!114 &1346612849
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3778,6 +3780,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inRangeTiles: []
+--- !u!114 &1346612853
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1346612843}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eed321a38dc8e854abfa4d6321363f0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1353065465
 GameObject:
   m_ObjectHideFlags: 0

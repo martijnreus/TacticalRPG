@@ -66,6 +66,7 @@ public class MapManager : MonoBehaviour
                     if (!tile.isBlocked)
                     {
                         tile.isBlocked = true;
+                        tile.unitOnTile = unit;
                         unit.transform.position = tile.transform.position;
                         unit.SetCurrentTile(tile);
 

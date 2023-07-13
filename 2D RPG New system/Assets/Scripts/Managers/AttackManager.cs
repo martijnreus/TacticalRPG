@@ -11,29 +11,28 @@ public class AttackManager : MonoBehaviour
         unitSelectionManager = FindObjectOfType<UnitSelectionManager>();
     }
 
-    private List<OverlayTile> GetAreaOfEffect(Spell spell, OverlayTile focusedTile)
+    public List<OverlayTile> GetAreaOfEffect(Spell spell, OverlayTile focusedTile)
     {
         List<OverlayTile> areaOfEffect = new List<OverlayTile>();
 
         // Get the tiles of effect
         if (spell.spellShape == Spell.SpellShape.cross)
         {
-            areaOfEffect = GetCrossShapeTiles(focusedTile, spell.range);
+            areaOfEffect = GetCrossShapeTiles(focusedTile, spell.damageRange);
         }
 
         return areaOfEffect;
     }
 
-    private void CastSpell(Spell spell, List<OverlayTile> areaOfEffect)
+    public void CastSpell(Spell spell, List<OverlayTile> areaOfEffect)
     {
         // Loop over each tile to apply effect
         foreach (OverlayTile tile in areaOfEffect)
         {
             // check if the tile contains a enemy
-            if (tile.currentUnit != null)
+            if (tile.unitOnTile != null)
             {
-                tile.currentUnit.RemoveHealth(spell.baseDamage);
-                Debug.Log("hoi");
+                tile.unitOnTile.RemoveHealth(spell.baseDamage);
             }
         }
 
@@ -66,12 +65,17 @@ public class AttackManager : MonoBehaviour
         // Add every valid overlayTile in a list
         foreach(Vector2Int location in locationList)
         {
-            OverlayTile tile = MapManager.Instance.map[location];
-            if (tile != null)
+            if (MapManager.Instance.map.ContainsKey(location))
             {
-                overlayTileArea.Add(tile);
+                OverlayTile tile = MapManager.Instance.map[location];
+                if (!overlayTileArea.Contains(tile))
+                {
+                    overlayTileArea.Add(tile);
+                }  
             }
         }
+
+        Debug.Log(overlayTileArea.Count);
      
         return overlayTileArea;
     }

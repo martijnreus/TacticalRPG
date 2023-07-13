@@ -16,17 +16,17 @@ public class RangeManager : MonoBehaviour
         pathfindingManager = GetComponent<PathfindingManager>();
     }
 
-    public void GetInRangeTiles()
+    public List<OverlayTile> GetInRangeTiles(int range)
     {
         // Find in-range tiles for the selected unit
         HideInRangeTiles();
 
-        inRangeTiles = rangeFinder.GetTilesInRange(unitSelectionManager.GetSelectedUnit().GetCurrentTile(), unitSelectionManager.GetSelectedUnit().GetMovementPoints());
+        inRangeTiles = rangeFinder.GetTilesInRange(unitSelectionManager.GetSelectedUnit().GetCurrentTile(), range);
         List<OverlayTile> validTiles = new List<OverlayTile>();
 
         foreach (OverlayTile item in inRangeTiles)
         {
-            if (pathfindingManager.pathFinder.FindPath(unitSelectionManager.GetSelectedUnit().GetCurrentTile(), item).Count <= unitSelectionManager.GetSelectedUnit().GetMovementPoints())
+            if (pathfindingManager.pathFinder.FindPath(unitSelectionManager.GetSelectedUnit().GetCurrentTile(), item).Count <= range)
             {
                 validTiles.Add(item);
             }
@@ -35,6 +35,8 @@ public class RangeManager : MonoBehaviour
         inRangeTiles = validTiles;
 
         ShowInRangeTiles();
+
+        return validTiles;
     }
 
     private void ShowInRangeTiles()

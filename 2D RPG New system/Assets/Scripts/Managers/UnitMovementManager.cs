@@ -36,7 +36,7 @@ public class UnitMovementManager : MonoBehaviour
 
             if (path.Count == 0)
             {
-                rangeManager.GetInRangeTiles();
+                rangeManager.GetInRangeTiles(unitSelectionManager.GetSelectedUnit().GetMovementPoints());
                 break;
             }
 
@@ -49,9 +49,14 @@ public class UnitMovementManager : MonoBehaviour
 
     public void PositionCharacterOnTile(OverlayTile tile)
     {
+        // Reset current Tile
+        tile.unitOnTile = null;
         unitSelectionManager.GetSelectedUnit().GetCurrentTile().isBlocked = false;
+
+        // Set new tile
         unitSelectionManager.GetSelectedUnit().transform.position = tile.transform.position;
         unitSelectionManager.GetSelectedUnit().SetCurrentTile(tile);
         unitSelectionManager.GetSelectedUnit().GetCurrentTile().isBlocked = true;
+        tile.unitOnTile = unitSelectionManager.GetSelectedUnit();
     }
 }

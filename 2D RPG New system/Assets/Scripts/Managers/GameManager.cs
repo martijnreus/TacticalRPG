@@ -13,11 +13,17 @@ public class GameManager : MonoBehaviour
     private UnitMovementManager unitMovementManager;
     private PathfindingManager pathfindingManager;
     private RangeManager rangeManager;
+    private AttackManager attackManager;
 
     private List<Unit> playerTeam = new List<Unit>();
     private List<Unit> enemyTeam = new List<Unit>();
 
     private float timer = 3f;
+    private bool hasSelectedAttackTile;
+    private OverlayTile selectedAttackTile;
+    private List<OverlayTile> areaOfEffect;
+
+    [SerializeField] private Spell spell; //TODO only temporary couple this to the unit
 
     public enum Team
     {
@@ -39,6 +45,7 @@ public class GameManager : MonoBehaviour
         unitMovementManager = GetComponent<UnitMovementManager>();
         pathfindingManager = GetComponent<PathfindingManager>();
         rangeManager = GetComponent<RangeManager>();
+        attackManager = GetComponent<AttackManager>();
     }
 
     private void Start()
@@ -64,7 +71,7 @@ public class GameManager : MonoBehaviour
                         break;
 
                     case State.normal: //TODO here you should be able to select players or start walking or attacking
-                        rangeManager.GetInRangeTiles();
+                        rangeManager.GetInRangeTiles(unitSelectionManager.GetSelectedUnit().GetMovementPoints());
 
                         // When the cursor is hovering find a path to the cursor and showcase if valid
                         pathfindingManager.FindWalkingPath(targetedOverlayTile);
@@ -101,13 +108,33 @@ public class GameManager : MonoBehaviour
 
                     case State.attacking:
 
-                        rangeManager.HideInRangeTiles();
+                        // Show what tiles can be hit
+                        List<OverlayTile> inRangeTiles = rangeManager.GetInRangeTiles(spell.range);
+                        
+                        if (Input.GetMouseButtonDown(0))
+                        {
+                            // show what the area of effect will be
+                            if (inRangeTiles.Contains(targetedOverlayTile) && targetedOverlayTile != selectedAttackTile)
+                            {
+                                areaOfEffect = attackManager.GetAreaOfEffect(spell, targetedOverlayTile); //TODO show this on screen
+                                selectedAttackTile = targetedOverlayTile;
+                                hasSelectedAttackTile = true;
+                            }
+                            // cast spell
+                            else if (hasSelectedAttackTile == true && targetedOverlayTile == selectedAttackTile)
+                            {
+                                attackManager.CastSpell(spell, areaOfEffect);
+                                hasSelectedAttackTile = false;
+                                selectedAttackTile = null;
+                                state = State.normal;
+                            }   
+                        }
 
                         if (Input.GetKeyDown(KeyCode.K))
                         {
                             state = State.normal;
                         }
-                        //TODO dont have attacking yet so put it back to normal 
+
                         break;
                 }
                 break;
@@ -178,6 +205,7 @@ public class GameManager : MonoBehaviour
 
     public void StartAttacking()
     {
+        rangeManager.HideInRangeTiles();
         state = State.attacking;
     }
 }

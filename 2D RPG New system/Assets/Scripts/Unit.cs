@@ -7,10 +7,10 @@ public class Unit : MonoBehaviour
     [SerializeField] private int movementPoints;
     [SerializeField] private int attackPoints;
     [SerializeField] private bool isEnemy;
+    [SerializeField] private int health;
 
     private OverlayTile currentTile;
     private bool isWalking;
-    private int health;
 
     private int saveMovementPoints;
     private int saveAttackPoints;
@@ -38,6 +38,8 @@ public class Unit : MonoBehaviour
     public bool GetIsEnemy() { return isEnemy; }
 
     public void RemoveHealth(int value) { health -= value; }
+
+    public int GetHealth() { return health; }
 
     public int GetAttackPoints() { return attackPoints; }
 
