@@ -11,10 +11,13 @@ public class OverlayTile : MonoBehaviour
     [HideInInspector] public OverlayTile parent;
 
     // Grid information
+
     [HideInInspector] public bool isBlocked;
 
     [HideInInspector] public Vector3Int gridLocation;
     [HideInInspector] public Vector2Int grid2DLocation { get { return new Vector2Int(gridLocation.x, gridLocation.y); } }
+
+    [HideInInspector] public Unit currentUnit;
 
     public void ShowTile()
     {

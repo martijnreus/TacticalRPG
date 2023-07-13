@@ -5,16 +5,20 @@ using UnityEngine;
 public class Unit : MonoBehaviour
 {
     [SerializeField] private int movementPoints;
+    [SerializeField] private int attackPoints;
     [SerializeField] private bool isEnemy;
 
     private OverlayTile currentTile;
     private bool isWalking;
+    private int health;
 
     private int saveMovementPoints;
+    private int saveAttackPoints;
 
     private void Start()
     {
         saveMovementPoints = movementPoints;
+        saveAttackPoints = attackPoints;
     }
 
     public OverlayTile GetCurrentTile() { return currentTile; }
@@ -27,9 +31,17 @@ public class Unit : MonoBehaviour
 
     public int GetMovementPoints(){ return movementPoints; }
 
-    public void RemoveMovementPoint() { movementPoints -= 1; }
+    public void RemoveMovementPoints() { movementPoints -= 1; }
+
+    public void ResetMovementPoints() { movementPoints = saveMovementPoints; }
 
     public bool GetIsEnemy() { return isEnemy; }
 
-    public void ResetMovementPoints() { movementPoints = saveMovementPoints; }
+    public void RemoveHealth(int value) { health -= value; }
+
+    public int GetAttackPoints() { return attackPoints; }
+
+    public void RemoveAttackPoints(int value) { attackPoints -= value; }
+
+    public void ResetAttackPoints() { attackPoints = saveAttackPoints; }
 }

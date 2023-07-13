@@ -4,17 +4,46 @@ using UnityEngine;
 
 public class AttackManager : MonoBehaviour
 {
-    private void Update()
+    private UnitSelectionManager unitSelectionManager;
+
+    private void Awake()
     {
-        
+        unitSelectionManager = FindObjectOfType<UnitSelectionManager>();
     }
 
-    private void Attack(Spell spell, OverlayTile focusedTile)
+    private List<OverlayTile> GetAreaOfEffect(Spell spell, OverlayTile focusedTile)
     {
-        //if (spell.spellShape == )
+        List<OverlayTile> areaOfEffect = new List<OverlayTile>();
+
+        // Get the tiles of effect
+        if (spell.spellShape == Spell.SpellShape.cross)
+        {
+            areaOfEffect = GetCrossShapeTiles(focusedTile, spell.range);
+        }
+
+        return areaOfEffect;
     }
 
-    private List<OverlayTile> CrossShape(OverlayTile focusedTile, int range)
+    private void CastSpell(Spell spell, List<OverlayTile> areaOfEffect)
+    {
+        // Loop over each tile to apply effect
+        foreach (OverlayTile tile in areaOfEffect)
+        {
+            // check if the tile contains a enemy
+            if (tile.currentUnit != null)
+            {
+                tile.currentUnit.RemoveHealth(spell.baseDamage);
+                Debug.Log("hoi");
+            }
+        }
+
+        // Remove AP and stuff
+        Unit selectedUnit = unitSelectionManager.GetSelectedUnit();
+        selectedUnit.RemoveAttackPoints(spell.attackPoints);
+    }
+
+    // TODO replace shape functions with a json containing the data
+    private List<OverlayTile> GetCrossShapeTiles(OverlayTile focusedTile, int range)
     {
         List<OverlayTile> overlayTileArea = new List<OverlayTile>();
         List<Vector2Int> locationList = new List<Vector2Int>();

@@ -17,7 +17,7 @@ public class UnitMovementManager : MonoBehaviour
         rangeManager = GetComponent<RangeManager>();
     }
 
-    public IEnumerator MoveUnitAlongPath(List<OverlayTile> path) //TODO move to movement script
+    public IEnumerator MoveUnitAlongPath(List<OverlayTile> path)
     {
         unitSelectionManager.GetSelectedUnit().SetIsWalking(true);
 
@@ -31,7 +31,7 @@ public class UnitMovementManager : MonoBehaviour
             {
                 PositionCharacterOnTile(path[0]);
                 path.RemoveAt(0);
-                unitSelectionManager.GetSelectedUnit().RemoveMovementPoint();
+                unitSelectionManager.GetSelectedUnit().RemoveMovementPoints();
             }
 
             if (path.Count == 0)
