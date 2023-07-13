@@ -64,7 +64,7 @@ public class GameManager : MonoBehaviour
             case Team.player:
                 switch (state)
                 {
-
+                   
                     case State.waiting:
                         state = State.normal;
                         break;
