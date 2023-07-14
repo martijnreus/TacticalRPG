@@ -26,14 +26,20 @@ public class RangeManager : MonoBehaviour
 
         foreach (OverlayTile item in inRangeTiles)
         {
-            if (pathfindingManager.pathFinder.FindPath(unitSelectionManager.GetSelectedUnit().GetCurrentTile(), item).Count <= range)
+            if (item == unitSelectionManager.GetSelectedUnit().GetCurrentTile())
+            {
+                validTiles.Add(item);
+            }
+
+            List<OverlayTile> path = pathfindingManager.pathFinder.FindPath(unitSelectionManager.GetSelectedUnit().GetCurrentTile(), item);
+            
+            if (path.Count <= range && path.Count != 0)
             {
                 validTiles.Add(item);
             }
         }
 
         inRangeTiles = validTiles;
-
         ShowInRangeTiles();
 
         return validTiles;
