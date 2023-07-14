@@ -18,7 +18,7 @@ public class PathFinder
 
         while (openList.Count > 0)
         {
-            OverlayTile currentOverlayTile = openList.OrderBy(x => x.FCost).First();
+            OverlayTile currentOverlayTile = openList.OrderBy(x => x.pathNode.FCost).First();
 
             openList.Remove(currentOverlayTile);
             closeList.Add(currentOverlayTile);
@@ -35,10 +35,10 @@ public class PathFinder
             {
                 if (neighbour.isBlocked || closeList.Contains(neighbour)) { continue; }
 
-                neighbour.GCost = GetDistance(startNode, neighbour);
-                neighbour.HCost = GetDistance(endNode, neighbour);
+                neighbour.pathNode.GCost = GetDistance(startNode, neighbour);
+                neighbour.pathNode.HCost = GetDistance(endNode, neighbour);
 
-                neighbour.parent = currentOverlayTile;
+                neighbour.pathNode.parent = currentOverlayTile;
 
                 if (!openList.Contains(neighbour))
                 {
@@ -64,7 +64,7 @@ public class PathFinder
         while (currentTile != startNode)
         {
             path.Add(currentTile);
-            currentTile = currentTile.parent;
+            currentTile = currentTile.pathNode.parent;
         }
 
         path.Reverse();

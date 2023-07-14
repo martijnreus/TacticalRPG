@@ -4,11 +4,7 @@ using UnityEngine;
 
 public class OverlayTile : MonoBehaviour
 {
-    // Pathfinding stuff
-    [HideInInspector] public int GCost;
-    [HideInInspector] public int HCost;
-    [HideInInspector] public int FCost { get { return GCost + HCost; } }
-    [HideInInspector] public OverlayTile parent;
+    [HideInInspector] public PathNode pathNode = new PathNode();
 
     // Grid information
     [HideInInspector] public bool isBlocked;
