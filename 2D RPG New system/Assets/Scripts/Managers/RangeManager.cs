@@ -50,7 +50,7 @@ public class RangeManager : MonoBehaviour
         // Show in-range tiles
         foreach (OverlayTile item in inRangeTiles)
         {
-            item.ShowTile();
+            item.ShowColor(OverlayTile.TileColors.white);
         }
     }
 
@@ -59,7 +59,7 @@ public class RangeManager : MonoBehaviour
         // Hide in-range tiles
         foreach (OverlayTile item in inRangeTiles)
         {
-            item.HideTile();
+            item.HideColor(OverlayTile.TileColors.white);
         }
     }
 }

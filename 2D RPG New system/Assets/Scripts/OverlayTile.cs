@@ -6,52 +6,67 @@ public class OverlayTile : MonoBehaviour
 {
     [HideInInspector] public PathNode pathNode = new PathNode();
 
-    // Grid information
+    // Tile information
     [HideInInspector] public bool isBlocked;
     [HideInInspector] public Vector3Int gridLocation;
     [HideInInspector] public Vector2Int grid2DLocation { get { return new Vector2Int(gridLocation.x, gridLocation.y); } }
     [HideInInspector] public Unit unitOnTile;
 
-    public void ShowTile()
+    // Tile color
+    [SerializeField] private Color[] colors;
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    private List<TileColors> colorsToShow  = new List<TileColors>();
+    private Dictionary<TileColors, Color> colorDictionary = new Dictionary<TileColors, Color>();
+
+    public enum TileColors
     {
-        gameObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0.6f);
+        white,
+        red,
+        blue,
+        green,
     }
 
-    public void HideTile()
+    private void Awake()
     {
-        gameObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0);
-        HideWalkingTile();
+        colorDictionary.Add(TileColors.white, colors[0]);
+        colorDictionary.Add(TileColors.red, colors[1]);
+        colorDictionary.Add(TileColors.blue, colors[2]);
+        colorDictionary.Add(TileColors.green, colors[3]);
     }
 
-    public void ShowWalkingTile()
+    public void HideColor(TileColors color)
     {
-        SpriteRenderer walkingTile = GetComponentsInChildren<SpriteRenderer>()[1];
-
-        Color currentColor = walkingTile.color;
-        walkingTile.color = new Color(currentColor.r, currentColor.g, currentColor.b, 1);
+        colorsToShow.Remove(color);
+        SetColor();
     }
 
-    public void HideWalkingTile()
+    public void ShowColor(TileColors color)
     {
-        SpriteRenderer walkingTile = GetComponentsInChildren<SpriteRenderer>()[1];
-
-        Color currentColor = walkingTile.color;
-        walkingTile.color = new Color(currentColor.r, currentColor.g, currentColor.b, 0);
+        colorsToShow.Add(color);
+        SetColor();
     }
 
-    public void ShowAttackingTile()
+    private void SetColor()
     {
-        SpriteRenderer attackingTile = GetComponentsInChildren<SpriteRenderer>()[2];
+        // Turn all the TileColors into actual colors
+        List<Color> actualColorsToShow = new List<Color>();
+        foreach(TileColors color in colorsToShow)
+        {
+            actualColorsToShow.Add(colorDictionary[color]);
+        }
 
-        Color currentColor = attackingTile.color;
-        attackingTile.color = new Color(currentColor.r, currentColor.g, currentColor.b, 1);
-    }
+        // Mix all colors into one
+        Color resultColor = new Color(0, 0, 0, 0);
+        foreach (Color color in actualColorsToShow)
+        {
+            resultColor += color;
+        }
 
-    public void HideAttackingTile()
-    {
-        SpriteRenderer attackingTile = GetComponentsInChildren<SpriteRenderer>()[2];
+        if (actualColorsToShow.Count != 0)
+        {
+            resultColor /= actualColorsToShow.Count;
+        }
 
-        Color currentColor = attackingTile.color;
-        attackingTile.color = new Color(currentColor.r, currentColor.g, currentColor.b, 0);
+        spriteRenderer.color = resultColor;
     }
 }

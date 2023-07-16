@@ -52,17 +52,17 @@ public class PathfindingManager : MonoBehaviour
         // Show the tiles along the walking path
         foreach (OverlayTile item in rangeManager.inRangeTiles)
         {
-            item.HideWalkingTile();
+            item.HideColor(OverlayTile.TileColors.green);
         }
 
         if (path.Count > 0)
         {
-            unitSelectionManager.GetSelectedUnit().GetCurrentTile().ShowWalkingTile();
+            unitSelectionManager.GetSelectedUnit().GetCurrentTile().ShowColor(OverlayTile.TileColors.green);
         }
 
         for (int i = 0; i < path.Count; i++)
         {
-            path[i].ShowWalkingTile();
+            path[i].ShowColor(OverlayTile.TileColors.green);
         }
     }
 
@@ -71,7 +71,7 @@ public class PathfindingManager : MonoBehaviour
         // Hide the tiles along the walking path
         foreach (OverlayTile item in rangeManager.inRangeTiles)
         {
-            item.HideWalkingTile();
+            item.HideColor(OverlayTile.TileColors.green);
         }
     }
 }

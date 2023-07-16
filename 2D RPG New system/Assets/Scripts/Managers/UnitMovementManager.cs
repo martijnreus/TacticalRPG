@@ -21,6 +21,9 @@ public class UnitMovementManager : MonoBehaviour
     {
         unitSelectionManager.GetSelectedUnit().SetIsWalking(true);
 
+        List<OverlayTile> pathCopy = new List <OverlayTile>(path);
+        pathCopy.Add(unitSelectionManager.GetSelectedUnit().GetCurrentTile());
+
         while (true)
         {
             float step = speed * Time.deltaTime;
@@ -43,6 +46,8 @@ public class UnitMovementManager : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
+        HidePathColor(pathCopy);
+
         unitSelectionManager.GetSelectedUnit().SetIsWalking(false);
         gameManager.state = GameManager.State.normal;
     }
@@ -50,7 +55,7 @@ public class UnitMovementManager : MonoBehaviour
     public void PositionCharacterOnTile(OverlayTile tile)
     {
         // Reset current Tile
-        tile.unitOnTile = null;
+        unitSelectionManager.GetSelectedUnit().GetCurrentTile().unitOnTile = null;
         unitSelectionManager.GetSelectedUnit().GetCurrentTile().isBlocked = false;
 
         // Set new tile
@@ -58,5 +63,14 @@ public class UnitMovementManager : MonoBehaviour
         unitSelectionManager.GetSelectedUnit().SetCurrentTile(tile);
         unitSelectionManager.GetSelectedUnit().GetCurrentTile().isBlocked = true;
         tile.unitOnTile = unitSelectionManager.GetSelectedUnit();
+    }
+
+    private void HidePathColor(List<OverlayTile> pathCopy)
+    {
+        unitSelectionManager.GetSelectedUnit().GetCurrentTile().HideColor(OverlayTile.TileColors.green);
+        foreach (OverlayTile tile in pathCopy)
+        {
+            tile.HideColor(OverlayTile.TileColors.green);
+        }
     }
 }
