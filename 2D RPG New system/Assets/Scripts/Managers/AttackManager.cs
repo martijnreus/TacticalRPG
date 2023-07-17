@@ -39,6 +39,8 @@ public class AttackManager : MonoBehaviour
         // Remove AP and stuff
         Unit selectedUnit = unitSelectionManager.GetSelectedUnit();
         selectedUnit.RemoveAttackPoints(spell.attackPoints);
+
+        HideAreaOfEffect(areaOfEffect);
     }
 
     // TODO replace shape functions with a json containing the data
@@ -74,9 +76,23 @@ public class AttackManager : MonoBehaviour
                 }  
             }
         }
-
-        Debug.Log(overlayTileArea.Count);
      
         return overlayTileArea;
+    }
+
+    public void ShowAreaOfEffect(List<OverlayTile> areaOfEffect)
+    {
+        foreach(OverlayTile tile in areaOfEffect)
+        {
+            tile.ShowColor(OverlayTile.TileColors.red);
+        }
+    }
+
+    public void HideAreaOfEffect(List<OverlayTile> areaOfEffect)
+    {
+        foreach (OverlayTile tile in areaOfEffect)
+        {
+            tile.HideColor(OverlayTile.TileColors.red);
+        }
     }
 }

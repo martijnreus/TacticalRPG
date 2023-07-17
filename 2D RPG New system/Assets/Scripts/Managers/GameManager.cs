@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
     private float timer = 3f;
     private bool hasSelectedAttackTile;
     private OverlayTile selectedAttackTile;
-    private List<OverlayTile> areaOfEffect;
+    private List<OverlayTile> areaOfEffect = new List<OverlayTile>();
 
     [SerializeField] private Spell spell; //TODO only temporary couple this to the unit
 
@@ -116,7 +116,9 @@ public class GameManager : MonoBehaviour
                             // show what the area of effect will be
                             if (inRangeTiles.Contains(targetedOverlayTile) && targetedOverlayTile != selectedAttackTile)
                             {
-                                areaOfEffect = attackManager.GetAreaOfEffect(spell, targetedOverlayTile); //TODO show this on screen
+                                attackManager.HideAreaOfEffect(areaOfEffect);
+                                areaOfEffect = attackManager.GetAreaOfEffect(spell, targetedOverlayTile);
+                                attackManager.ShowAreaOfEffect(areaOfEffect);
                                 selectedAttackTile = targetedOverlayTile;
                                 hasSelectedAttackTile = true;
                             }
