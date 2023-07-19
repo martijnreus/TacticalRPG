@@ -16,10 +16,10 @@ public class RangeManager : MonoBehaviour
         pathfindingManager = GetComponent<PathfindingManager>();
     }
 
-    public List<OverlayTile> GetInRangeTiles(int range)
+    public List<OverlayTile> GetInRangeTiles(int range, OverlayTile.TileColors color)
     {
         // Find in-range tiles for the selected unit
-        HideInRangeTiles();
+        HideInRangeTiles(color);
 
         inRangeTiles = rangeFinder.GetTilesInRange(unitSelectionManager.GetSelectedUnit().GetCurrentTile(), range);
         List<OverlayTile> validTiles = new List<OverlayTile>();
@@ -40,26 +40,26 @@ public class RangeManager : MonoBehaviour
         }
 
         inRangeTiles = validTiles;
-        ShowInRangeTiles();
+        ShowInRangeTiles(color);
 
         return validTiles;
     }
 
-    private void ShowInRangeTiles()
+    private void ShowInRangeTiles(OverlayTile.TileColors color)
     {
         // Show in-range tiles
         foreach (OverlayTile item in inRangeTiles)
         {
-            item.ShowColor(OverlayTile.TileColors.white);
+            item.ShowColor(color);
         }
     }
 
-    public void HideInRangeTiles()
+    public void HideInRangeTiles(OverlayTile.TileColors color)
     {
         // Hide in-range tiles
         foreach (OverlayTile item in inRangeTiles)
         {
-            item.HideColor(OverlayTile.TileColors.white);
+            item.HideColor(color);
         }
     }
 }

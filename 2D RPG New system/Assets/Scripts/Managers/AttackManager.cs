@@ -5,10 +5,12 @@ using UnityEngine;
 public class AttackManager : MonoBehaviour
 {
     private UnitSelectionManager unitSelectionManager;
+    private RangeManager rangeManager;
 
     private void Awake()
     {
         unitSelectionManager = FindObjectOfType<UnitSelectionManager>();
+        rangeManager = FindObjectOfType<RangeManager>();
     }
 
     public List<OverlayTile> GetAreaOfEffect(Spell spell, OverlayTile focusedTile)

@@ -11,6 +11,7 @@ public class Unit : MonoBehaviour
 
     private OverlayTile currentTile;
     private bool isWalking;
+    private bool isDeath;
 
     private int saveMovementPoints;
     private int saveAttackPoints;
@@ -19,6 +20,14 @@ public class Unit : MonoBehaviour
     {
         saveMovementPoints = movementPoints;
         saveAttackPoints = attackPoints;
+    }
+
+    private void Update()
+    {
+        if (health <= 0 && !isDeath)
+        {
+            Die();
+        }
     }
 
     public OverlayTile GetCurrentTile() { return currentTile; }
@@ -46,4 +55,12 @@ public class Unit : MonoBehaviour
     public void RemoveAttackPoints(int value) { attackPoints -= value; }
 
     public void ResetAttackPoints() { attackPoints = saveAttackPoints; }
+
+    private void Die()
+    {
+        currentTile.unitOnTile = null;
+        currentTile.isBlocked = false;
+        isDeath = true;
+        gameObject.SetActive(false);
+    }
 }

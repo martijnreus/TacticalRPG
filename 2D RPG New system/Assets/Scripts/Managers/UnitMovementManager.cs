@@ -39,7 +39,7 @@ public class UnitMovementManager : MonoBehaviour
 
             if (path.Count == 0)
             {
-                rangeManager.GetInRangeTiles(unitSelectionManager.GetSelectedUnit().GetMovementPoints());
+                rangeManager.GetInRangeTiles(unitSelectionManager.GetSelectedUnit().GetMovementPoints(), OverlayTile.TileColors.white);
                 break;
             }
 
@@ -65,7 +65,7 @@ public class UnitMovementManager : MonoBehaviour
         tile.unitOnTile = unitSelectionManager.GetSelectedUnit();
     }
 
-    private void HidePathColor(List<OverlayTile> pathCopy)
+    public void HidePathColor(List<OverlayTile> pathCopy)
     {
         unitSelectionManager.GetSelectedUnit().GetCurrentTile().HideColor(OverlayTile.TileColors.green);
         foreach (OverlayTile tile in pathCopy)

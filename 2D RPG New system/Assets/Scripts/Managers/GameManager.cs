@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     private UnitSelectionManager unitSelectionManager;
     private UnitMovementManager unitMovementManager;
     private PathfindingManager pathfindingManager;
+    private TileColorManager tileColorManager;
     private RangeManager rangeManager;
     private AttackManager attackManager;
 
@@ -21,6 +22,7 @@ public class GameManager : MonoBehaviour
     private float timer = 3f;
     private bool hasSelectedAttackTile;
     private OverlayTile selectedAttackTile;
+
     private List<OverlayTile> areaOfEffect = new List<OverlayTile>();
 
     [SerializeField] private Spell spell; //TODO only temporary couple this to the unit
@@ -44,6 +46,7 @@ public class GameManager : MonoBehaviour
         unitSelectionManager = GetComponent<UnitSelectionManager>();
         unitMovementManager = GetComponent<UnitMovementManager>();
         pathfindingManager = GetComponent<PathfindingManager>();
+        tileColorManager = GetComponent<TileColorManager>();
         rangeManager = GetComponent<RangeManager>();
         attackManager = GetComponent<AttackManager>();
     }
@@ -71,7 +74,7 @@ public class GameManager : MonoBehaviour
                         break;
 
                     case State.normal: //TODO here you should be able to select players or start walking or attacking
-                        rangeManager.GetInRangeTiles(unitSelectionManager.GetSelectedUnit().GetMovementPoints());
+                        rangeManager.GetInRangeTiles(unitSelectionManager.GetSelectedUnit().GetMovementPoints(), OverlayTile.TileColors.white);
 
                         // When the cursor is hovering find a path to the cursor and showcase if valid
                         pathfindingManager.FindWalkingPath(targetedOverlayTile);
@@ -82,7 +85,7 @@ public class GameManager : MonoBehaviour
 
                             if (pathfindingManager.GetPath().Count != 0 && pathfindingManager.GetPath().Count <= unitSelectionManager.GetSelectedUnit().GetMovementPoints() && hasPlayer == false)
                             {
-                                state = State.walking;
+                                StartWalking();
                             }
                         }
 
@@ -102,23 +105,25 @@ public class GameManager : MonoBehaviour
                         // start walking when in this state
                         if (!unitSelectionManager.GetSelectedUnit().GetIsWalking())
                         {
-                            StartCoroutine(unitMovementManager.MoveUnitAlongPath(pathfindingManager.GetPath()));
+                            StartCoroutine(unitMovementManager.MoveUnitAlongPath(pathfindingManager.GetPath()));                            
                         }
                         break;
 
                     case State.attacking:
 
                         // Show what tiles can be hit
-                        List<OverlayTile> inRangeTiles = rangeManager.GetInRangeTiles(spell.range);
+                        List<OverlayTile> inRangeTiles = rangeManager.GetInRangeTiles(spell.range, OverlayTile.TileColors.blue);
                         
                         if (Input.GetMouseButtonDown(0))
                         {
                             // show what the area of effect will be
                             if (inRangeTiles.Contains(targetedOverlayTile) && targetedOverlayTile != selectedAttackTile)
                             {
-                                attackManager.HideAreaOfEffect(areaOfEffect);
+                                // Show the areaOfEffect visuals
+                                List<OverlayTile> oldAreaOfEffect = areaOfEffect;
                                 areaOfEffect = attackManager.GetAreaOfEffect(spell, targetedOverlayTile);
-                                attackManager.ShowAreaOfEffect(areaOfEffect);
+                                tileColorManager.UpdateAreaOfEffect(oldAreaOfEffect, areaOfEffect);
+
                                 selectedAttackTile = targetedOverlayTile;
                                 hasSelectedAttackTile = true;
                             }
@@ -128,13 +133,13 @@ public class GameManager : MonoBehaviour
                                 attackManager.CastSpell(spell, areaOfEffect);
                                 hasSelectedAttackTile = false;
                                 selectedAttackTile = null;
-                                state = State.normal;
+                                StopAttacking();
                             }   
                         }
 
                         if (Input.GetKeyDown(KeyCode.K))
                         {
-                            state = State.normal;
+                            StopAttacking();
                         }
 
                         break;
@@ -207,7 +212,25 @@ public class GameManager : MonoBehaviour
 
     public void StartAttacking()
     {
-        rangeManager.HideInRangeTiles();
+        unitMovementManager.HidePathColor(pathfindingManager.GetPath());
+        rangeManager.HideInRangeTiles(OverlayTile.TileColors.white);
         state = State.attacking;
+    }
+
+    public void StopAttacking()
+    {
+        tileColorManager.HideAreaOfEffect(areaOfEffect);
+        rangeManager.HideInRangeTiles(OverlayTile.TileColors.blue);
+        state = State.normal;
+    }
+
+    public void StartWalking()
+    {
+        state = State.walking;
+    }
+
+    public void StopWalking()
+    {
+        state = State.normal;
     }
 }
