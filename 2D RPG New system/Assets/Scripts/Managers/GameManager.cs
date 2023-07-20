@@ -20,10 +20,10 @@ public class GameManager : MonoBehaviour
     private List<Unit> enemyTeam = new List<Unit>();
 
     private float timer = 3f;
-    private bool hasSelectedAttackTile;
-    private OverlayTile selectedAttackTile;
 
     private List<OverlayTile> areaOfEffect = new List<OverlayTile>();
+    private List<OverlayTile> inRangeTiles = new List<OverlayTile>();
+    private List<OverlayTile> pathToWalk = new List<OverlayTile>();
 
     [SerializeField] private Spell spell; //TODO only temporary couple this to the unit
 
@@ -103,38 +103,37 @@ public class GameManager : MonoBehaviour
 
                     case State.walking:
                         // start walking when in this state
-                        if (!unitSelectionManager.GetSelectedUnit().GetIsWalking())
+                        if (pathfindingManager.GetPath().Count != 0)
                         {
-                            StartCoroutine(unitMovementManager.MoveUnitAlongPath(pathfindingManager.GetPath()));                            
+                            unitMovementManager.MoveUnitOverPath(pathfindingManager.GetPath());
                         }
+                        else
+                        {
+                            StopWalking();
+                        }
+                        
                         break;
 
                     case State.attacking:
 
-                        // Show what tiles can be hit
-                        List<OverlayTile> inRangeTiles = rangeManager.GetInRangeTiles(spell.range, OverlayTile.TileColors.blue);
+                        if (inRangeTiles.Contains(targetedOverlayTile))
+                        {
+                            // Show the areaOfEffect visuals
+                            List<OverlayTile> oldAreaOfEffect = areaOfEffect;
+                            areaOfEffect = attackManager.GetAreaOfEffect(spell, targetedOverlayTile);
+                            tileColorManager.UpdateAreaOfEffect(oldAreaOfEffect, areaOfEffect);
+                        }
+                        else
+                        {
+                            // Hide the areaOfEffect
+                            tileColorManager.HideAreaOfEffect(areaOfEffect);
+                        }
                         
+                        // Cast spell
                         if (Input.GetMouseButtonDown(0))
                         {
-                            // show what the area of effect will be
-                            if (inRangeTiles.Contains(targetedOverlayTile) && targetedOverlayTile != selectedAttackTile)
-                            {
-                                // Show the areaOfEffect visuals
-                                List<OverlayTile> oldAreaOfEffect = areaOfEffect;
-                                areaOfEffect = attackManager.GetAreaOfEffect(spell, targetedOverlayTile);
-                                tileColorManager.UpdateAreaOfEffect(oldAreaOfEffect, areaOfEffect);
-
-                                selectedAttackTile = targetedOverlayTile;
-                                hasSelectedAttackTile = true;
-                            }
-                            // cast spell
-                            else if (hasSelectedAttackTile == true && targetedOverlayTile == selectedAttackTile)
-                            {
-                                attackManager.CastSpell(spell, areaOfEffect);
-                                hasSelectedAttackTile = false;
-                                selectedAttackTile = null;
-                                StopAttacking();
-                            }   
+                            attackManager.CastSpell(spell, areaOfEffect);
+                            StopAttacking();
                         }
 
                         if (Input.GetKeyDown(KeyCode.K))
@@ -212,6 +211,7 @@ public class GameManager : MonoBehaviour
 
     public void StartAttacking()
     {
+        inRangeTiles = rangeManager.GetInRangeTiles(spell.range, OverlayTile.TileColors.blue);
         unitMovementManager.HidePathColor(pathfindingManager.GetPath());
         rangeManager.HideInRangeTiles(OverlayTile.TileColors.white);
         state = State.attacking;
@@ -226,11 +226,15 @@ public class GameManager : MonoBehaviour
 
     public void StartWalking()
     {
+        pathToWalk = new List<OverlayTile>(pathfindingManager.GetPath());
+        pathToWalk.Add(unitSelectionManager.GetSelectedUnit().GetCurrentTile());
         state = State.walking;
     }
 
     public void StopWalking()
     {
+        unitMovementManager.HidePathColor(pathToWalk);
+        unitSelectionManager.GetSelectedUnit().SetIsWalking(false);
         state = State.normal;
     }
 }
