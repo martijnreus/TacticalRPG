@@ -115,7 +115,6 @@ public class GameManager : MonoBehaviour
                         break;
 
                     case State.attacking:
-
                         if (inRangeTiles.Contains(targetedOverlayTile))
                         {
                             // Show the areaOfEffect visuals
@@ -143,6 +142,7 @@ public class GameManager : MonoBehaviour
 
                         break;
                 }
+
                 break;
 
             case Team.enemy:
